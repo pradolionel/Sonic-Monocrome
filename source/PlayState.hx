@@ -1061,6 +1061,9 @@ class PlayState extends MusicBeatState
 		
 		super.create();
 	}
+	
+	
+	
 		switch (SONG.song.toLowerCase()) {
 			case 'monochrome':
 				healthBar.alpha = 0;
