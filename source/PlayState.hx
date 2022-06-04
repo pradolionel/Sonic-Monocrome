@@ -1084,7 +1084,6 @@ class PlayState extends MusicBeatState
 			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
 		healthBar.updateBar();
 	}
-	
 		switch (SONG.song.toLowerCase()) {
 			case 'monochrome':
 				healthBar.alpha = 0;
@@ -1096,7 +1095,6 @@ class PlayState extends MusicBeatState
 				timeBarBG.alpha = 0;
 				timeTxt.alpha = 0;
 				dad.visible = false;
-
 	public function addCharacterToList(newCharacter:String, type:Int) {
 		switch(type) {
 			case 0:
