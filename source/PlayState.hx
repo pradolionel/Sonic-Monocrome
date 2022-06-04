@@ -261,22 +261,6 @@ class PlayState extends MusicBeatState
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	public var introSoundsSuffix:String = '';
 
-	var pendulum:Pendulum;
-	var tranceThing:FlxSprite;
-	var tranceDeathScreen:FlxSprite;
-	var pendulumShadow:FlxTypedGroup<FlxSprite>;
-
-	var tranceActive:Bool = false;
-	var tranceDrain:Bool = false;
-	var tranceSound:FlxSound;
-	var tranceCanKill:Bool = true;
-	var pendulumDrain:Bool = true;
-	var psyshockCooldown:Int = 80;
-	var psyshocking:Bool = false;
-	var skippedFirstPendulum:Bool = false;
-
-	var unowning:Bool = false;
-
 	override public function create()
 	{
 		#if MODS_ALLOWED
