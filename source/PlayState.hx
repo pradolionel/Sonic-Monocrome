@@ -187,7 +187,16 @@ class PlayState extends MusicBeatState
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
 
-	var foreground:BGSprite;
+	var halloweenBG:BGSprite;
+	var halloweenWhite:BGSprite;
+
+	var phillyCityLights:FlxTypedGroup<BGSprite>;
+	var phillyTrain:BGSprite;
+	var blammedLightsBlack:ModchartSprite;
+	var blammedLightsBlackTween:FlxTween;
+	var phillyCityLightsEvent:FlxTypedGroup<BGSprite>;
+	var phillyCityLightsEventTween:FlxTween;
+	var trainSound:FlxSound;
 
 	var limoKillingState:Int = 0;
 	var limo:BGSprite;
@@ -208,7 +217,7 @@ class PlayState extends MusicBeatState
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
 	var bgGhouls:BGSprite;
-	var psyshockParticle:Character;	
+
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
@@ -251,22 +260,6 @@ class PlayState extends MusicBeatState
 	// Lua shit
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	public var introSoundsSuffix:String = '';
-	
-	var pendulum:Pendulum;
-	var tranceThing:FlxSprite;
-	var tranceDeathScreen:FlxSprite;
-	var pendulumShadow:FlxTypedGroup<FlxSprite>;
-
-	var tranceActive:Bool = false;
-	var tranceDrain:Bool = false;
-	var tranceSound:FlxSound;
-	var tranceCanKill:Bool = true;
-	var pendulumDrain:Bool = true;
-	var psyshockCooldown:Int = 80;
-	var psyshocking:Bool = false;
-	var skippedFirstPendulum:Bool = false;
-
-	var unowning:Bool = false;
 
 	override public function create()
 	{
@@ -338,6 +331,8 @@ class PlayState extends MusicBeatState
 					curStage = 'mall';
 				case 'winter-horrorland':
 					curStage = 'mallEvil';
+				case 'monochrome':
+					curStage = 'lost';
 				case 'senpai' | 'roses':
 					curStage = 'school';
 				case 'thorns':
@@ -758,6 +753,17 @@ class PlayState extends MusicBeatState
 			case 'schoolEvil':
 				var evilTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069); //nice
 				insert(members.indexOf(dadGroup) - 1, evilTrail);
+
+			case 'monochrome':
+				healthBar.alpha = 0;
+				healthBarBG.alpha = 0;
+				iconP1.alpha = 0;
+				iconP2.alpha = 0;
+				scoreTxt.alpha = 0;
+				timeBar.alpha = 0;
+				timeBarBG.alpha = 0;
+				timeTxt.alpha = 0;
+				dad.visible = false;
 		}
 
 		var file:String = Paths.json(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
@@ -1061,141 +1067,19 @@ class PlayState extends MusicBeatState
 		// Updating Discord Rich Presence.
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 		#end
+		
+		
+		callOnLuas('onCreatePost', []);
+		
+		
 		super.create();
-
-		pendulum = new Pendulum();
-		
-		if (SONG.player2 == 'hypno') {
-			pendulumShadow = new FlxTypedGroup<FlxSprite>();
-			
-			pendulum.frames = Paths.getSparrowAtlas('hypno/Pendelum', 'shared');
-			pendulum.animation.addByPrefix('idle', 'Pendelum instance 1', 24, true);
-			pendulum.animation.play('idle');
-			pendulum.antialiasing = true; // fuck you ASH
-			
-			pendulum.scale.set(1.3, 1.3);
-			pendulum.updateHitbox();
-			pendulum.origin.set(65, 0);
-			pendulum.angle = -9;
-			add(pendulumShadow);
-			add(pendulum);
-
-			tranceActive = true;
-
-			
-		} else if (SONG.player2 == 'hypno-two') {
-			pendulumShadow = new FlxTypedGroup<FlxSprite>();
-
-			pendulum.frames = Paths.getSparrowAtlas('hypno/Pendelum_Phase2', 'shared');
-			pendulum.animation.addByPrefix('idle', 'Pendelum Phase 2', 24, true);
-			pendulum.animation.play('idle');
-			pendulum.updateHitbox();
-			pendulum.origin.set(65, 0);
-			pendulum.cameras = [camHUD];
-			pendulum.x = FlxG.width / 4;
-			pendulum.y = 0;
-			pendulum.antialiasing = true; // fuck you again
-			add(pendulumShadow);
-			add(pendulum);
-
-			tranceActive = true;
-		}
-		if (ClientPrefs.pussyMode) {
-			if (tranceActive) {
-				tranceActive = false;
-				remove(pendulum);
-			}
-		}
-		tranceThing = new FlxSprite();
-		tranceThing.frames = Paths.getSparrowAtlas('hypno/StaticHypno', 'shared');
-		tranceThing.animation.addByPrefix('idle', 'StaticHypno', (ClientPrefs.photosensitive) ? 0 : 24, true);
-		tranceThing.animation.play('idle');
-		tranceThing.cameras = [camHUD];
-		tranceThing.setGraphicSize(FlxG.width, FlxG.height);
-		tranceThing.updateHitbox();
-		add(tranceThing);
-		tranceThing.alpha = 0;
-
-		tranceDeathScreen = new FlxSprite();
-		tranceDeathScreen.frames = Paths.getSparrowAtlas('hypno/StaticHypno_highopacity', 'shared');
-		tranceDeathScreen.animation.addByPrefix('idle', 'StaticHypno', 24, true);
-		tranceDeathScreen.animation.play('idle');
-		tranceDeathScreen.cameras = [camHUD];
-		tranceDeathScreen.setGraphicSize(FlxG.width, FlxG.height);
-		tranceDeathScreen.updateHitbox();
-		add(tranceDeathScreen);
-		tranceDeathScreen.alpha = 0;
-
-		psyshockParticle = new Character(0, 0, 'hypno');
-		psyshockParticle.playAnim("psyshock particle", true);
-		psyshockParticle.alpha = 0;
-		add(psyshockParticle);
-
-		if (!ClientPrefs.photosensitive)
-			camHUD.flash(FlxColor.fromString('0xFFFFAFC1'), 0.1, null, true);
-		FlxG.sound.play(Paths.sound('Psyshock', 'shared'), 0);
-		tranceSound = FlxG.sound.play(Paths.sound('TranceStatic', 'shared'), 0, true);
-
-			
-		switch (SONG.song.toLowerCase()) {
-			case 'monochrome':
-				healthBar.alpha = 0;
-				healthBarBG.alpha = 0;
-				iconP1.alpha = 0;
-				iconP2.alpha = 0;
-				scoreTxt.alpha = 0;
-				timeBar.alpha = 0;
-				timeBarBG.alpha = 0;
-				timeTxt.alpha = 0;
-				dad.visible = false;
-
-				// jumpscare
-				jumpScare = new FlxSprite().loadGraphic(Paths.image('lostSilver/Gold_Jumpscare'));
-				jumpScare.setGraphicSize(Std.int(FlxG.width * jumpscareSizeInterval), Std.int(FlxG.height * jumpscareSizeInterval));
-				jumpScare.updateHitbox();
-				jumpScare.screenCenter();
-				add(jumpScare);
-
-				jumpScare.setGraphicSize(Std.int(FlxG.width * jumpscareSizeInterval), Std.int(FlxG.height * jumpscareSizeInterval));
-				jumpScare.updateHitbox();
-				jumpScare.screenCenter();
-
-				jumpScare.visible = false;
-				jumpScare.cameras = [camHUD];
-				if (ClientPrefs.hellMode)	{
-					pendulumShadow = new FlxTypedGroup<FlxSprite>();
-
-					pendulum.frames = Paths.getSparrowAtlas('hypno/Pendelum_Phase2', 'shared');
-					pendulum.animation.addByPrefix('idle', 'Pendelum Phase 2', 24, true);
-					pendulum.animation.play('idle');
-					pendulum.updateHitbox();
-					pendulum.origin.set(65, 0);
-					pendulum.cameras = [camHUD];
-					pendulum.x = FlxG.width / 4;
-					pendulum.y = 0;
-					pendulum.antialiasing = true; // fuck you again
-					add(pendulumShadow);
-					add(pendulum);
-
-					tranceActive = true;
-				}
-			case 'missingno':
-				iconP2.alpha = 0;
-				camFollow.x = 510;
-				camFollow.y = 358;
-		} 
-		
 	}
 
-	var jumpScare:FlxSprite;
-
 	public function addTextToDebug(text:String) {
-		#if LUA_ALLOWED
 		luaDebugGroup.forEachAlive(function(spr:DebugLuaText) {
 			spr.y += 20;
 		});
 		luaDebugGroup.add(new DebugLuaText(text, luaDebugGroup));
-		#end
 	}
 
 	public function reloadHealthBarColors() {
