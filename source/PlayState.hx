@@ -751,17 +751,7 @@ class PlayState extends MusicBeatState
 			case 'schoolEvil':
 				var evilTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069); //nice
 				insert(members.indexOf(dadGroup) - 1, evilTrail);
-
-			case 'lost':
-				gf.alpha = 0;
-				dad.alpha = 0;
-				blackBG.alpha = 1;
-				blackFG.alpha = 1;
-				camHUD.alpha = 0;
-				hudAlpha = true;
 		}
-
-		
 
 		var file:String = Paths.json(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
 		if (OpenFlAssets.exists(file)) {
@@ -1071,7 +1061,18 @@ class PlayState extends MusicBeatState
 		
 		super.create();
 	}
-
+		switch (SONG.song.toLowerCase()) {
+			case 'monochrome':
+				healthBar.alpha = 0;
+				healthBarBG.alpha = 0;
+				iconP1.alpha = 0;
+				iconP2.alpha = 0;
+				scoreTxt.alpha = 0;
+				timeBar.alpha = 0;
+				timeBarBG.alpha = 0;
+				timeTxt.alpha = 0;
+				dad.visible = false;
+				
 	public function addTextToDebug(text:String) {
 		luaDebugGroup.forEachAlive(function(spr:DebugLuaText) {
 			spr.y += 20;
@@ -1084,17 +1085,7 @@ class PlayState extends MusicBeatState
 			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
 		healthBar.updateBar();
 	}
-		switch (SONG.song.toLowerCase()) {
-			case 'monochrome':
-				healthBar.alpha = 0;
-				healthBarBG.alpha = 0;
-				iconP1.alpha = 0;
-				iconP2.alpha = 0;
-				scoreTxt.alpha = 0;
-				timeBar.alpha = 0;
-				timeBarBG.alpha = 0;
-				timeTxt.alpha = 0;
-				dad.visible = false;
+
 	public function addCharacterToList(newCharacter:String, type:Int) {
 		switch(type) {
 			case 0:
