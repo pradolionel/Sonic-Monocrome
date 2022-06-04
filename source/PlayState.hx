@@ -261,13 +261,31 @@ class PlayState extends MusicBeatState
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	public var introSoundsSuffix:String = '';
 
+	var pendulum:Pendulum;
+	var tranceThing:FlxSprite;
+	var tranceDeathScreen:FlxSprite;
+	var pendulumShadow:FlxTypedGroup<FlxSprite>;
+
+	var tranceActive:Bool = false;
+	var tranceDrain:Bool = false;
+	var tranceSound:FlxSound;
+	var tranceCanKill:Bool = true;
+	var pendulumDrain:Bool = true;
+	var psyshockCooldown:Int = 80;
+	var psyshocking:Bool = false;
+	var keyboardTimer:Int = 8;
+	var keyboard:FlxSprite;
+	var skippedFirstPendulum:Bool = false;
+
+	var unowning:Bool = false;
+
 	override public function create()
 	{
-        #if MODS_ALLOWED
- 		Paths.destroyLoadedImages(resetSpriteCache);
-  		#end	
+		#if MODS_ALLOWED
+		Paths.destroyLoadedImages(resetSpriteCache);
+		#end
 		resetSpriteCache = false;
-
+		isDownscroll = ClientPrefs.downScroll;
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
