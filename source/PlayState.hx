@@ -1054,19 +1054,155 @@ class PlayState extends MusicBeatState
 		// Updating Discord Rich Presence.
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 		#end
-		
-		
-		callOnLuas('onCreatePost', []);
-		
-		
 		super.create();
+
+		pendulum = new Pendulum();
+		
+		if (SONG.player2 == 'hypno') {
+			pendulumShadow = new FlxTypedGroup<FlxSprite>();
+			
+			pendulum.frames = Paths.getSparrowAtlas('hypno/Pendelum', 'shared');
+			pendulum.animation.addByPrefix('idle', 'Pendelum instance 1', 24, true);
+			pendulum.animation.play('idle');
+			pendulum.antialiasing = true; // fuck you ASH
+			
+			pendulum.scale.set(1.3, 1.3);
+			pendulum.updateHitbox();
+			pendulum.origin.set(65, 0);
+			pendulum.angle = -9;
+			add(pendulumShadow);
+			add(pendulum);
+
+			tranceActive = true;
+
+			
+		} else if (SONG.player2 == 'hypno-two') {
+			pendulumShadow = new FlxTypedGroup<FlxSprite>();
+
+			pendulum.frames = Paths.getSparrowAtlas('hypno/Pendelum_Phase2', 'shared');
+			pendulum.animation.addByPrefix('idle', 'Pendelum Phase 2', 24, true);
+			pendulum.animation.play('idle');
+			pendulum.updateHitbox();
+			pendulum.origin.set(65, 0);
+			pendulum.cameras = [camHUD];
+			pendulum.x = FlxG.width / 4;
+			pendulum.y = 0;
+			pendulum.antialiasing = true; // fuck you again
+			add(pendulumShadow);
+			add(pendulum);
+
+			tranceActive = true;
+		}
+		if (ClientPrefs.pussyMode) {
+			if (tranceActive) {
+				tranceActive = false;
+				remove(pendulum);
+			}
+		}
+		keyboard = new FlxSprite();
+		keyboard.frames = Paths.getSparrowAtlas('hypno/Extras', 'shared');
+		keyboard.animation.addByIndices('idle', 'Spacebar', [11, 12, 13, 14 ,15 ,16 ,17, 18], '', 24, false);
+		keyboard.animation.addByIndices('press', 'Spacebar', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], '', 24, false);
+		keyboard.animation.play('idle');
+		keyboard.cameras = [camHUD];
+		keyboard.screenCenter(X);
+		keyboard.y = 400;
+		keyboard.alpha = 0;
+		add(keyboard);
+
+		if (ClientPrefs.hellMode || ClientPrefs.pussyMode) {
+			remove(keyboard);
+		}
+		tranceThing = new FlxSprite();
+		tranceThing.frames = Paths.getSparrowAtlas('hypno/StaticHypno', 'shared');
+		tranceThing.animation.addByPrefix('idle', 'StaticHypno', (ClientPrefs.photosensitive) ? 0 : 24, true);
+		tranceThing.animation.play('idle');
+		tranceThing.cameras = [camHUD];
+		tranceThing.setGraphicSize(FlxG.width, FlxG.height);
+		tranceThing.updateHitbox();
+		add(tranceThing);
+		tranceThing.alpha = 0;
+
+		tranceDeathScreen = new FlxSprite();
+		tranceDeathScreen.frames = Paths.getSparrowAtlas('hypno/StaticHypno_highopacity', 'shared');
+		tranceDeathScreen.animation.addByPrefix('idle', 'StaticHypno', 24, true);
+		tranceDeathScreen.animation.play('idle');
+		tranceDeathScreen.cameras = [camHUD];
+		tranceDeathScreen.setGraphicSize(FlxG.width, FlxG.height);
+		tranceDeathScreen.updateHitbox();
+		add(tranceDeathScreen);
+		tranceDeathScreen.alpha = 0;
+
+		psyshockParticle = new Character(0, 0, 'hypno');
+		psyshockParticle.playAnim("psyshock particle", true);
+		psyshockParticle.alpha = 0;
+		add(psyshockParticle);
+
+		if (!ClientPrefs.photosensitive)
+			camHUD.flash(FlxColor.fromString('0xFFFFAFC1'), 0.1, null, true);
+		FlxG.sound.play(Paths.sound('Psyshock', 'shared'), 0);
+		tranceSound = FlxG.sound.play(Paths.sound('TranceStatic', 'shared'), 0, true);
+
+			
+		switch (SONG.song.toLowerCase()) {
+			case 'monochrome':
+				healthBar.alpha = 0;
+				healthBarBG.alpha = 0;
+				iconP1.alpha = 0;
+				iconP2.alpha = 0;
+				scoreTxt.alpha = 0;
+				timeBar.alpha = 0;
+				timeBarBG.alpha = 0;
+				timeTxt.alpha = 0;
+				dad.visible = false;
+
+				// jumpscare
+				jumpScare = new FlxSprite().loadGraphic(Paths.image('lostSilver/Gold_Jumpscare'));
+				jumpScare.setGraphicSize(Std.int(FlxG.width * jumpscareSizeInterval), Std.int(FlxG.height * jumpscareSizeInterval));
+				jumpScare.updateHitbox();
+				jumpScare.screenCenter();
+				add(jumpScare);
+
+				jumpScare.setGraphicSize(Std.int(FlxG.width * jumpscareSizeInterval), Std.int(FlxG.height * jumpscareSizeInterval));
+				jumpScare.updateHitbox();
+				jumpScare.screenCenter();
+
+				jumpScare.visible = false;
+				jumpScare.cameras = [camHUD];
+				if (ClientPrefs.hellMode)	{
+					pendulumShadow = new FlxTypedGroup<FlxSprite>();
+
+					pendulum.frames = Paths.getSparrowAtlas('hypno/Pendelum_Phase2', 'shared');
+					pendulum.animation.addByPrefix('idle', 'Pendelum Phase 2', 24, true);
+					pendulum.animation.play('idle');
+					pendulum.updateHitbox();
+					pendulum.origin.set(65, 0);
+					pendulum.cameras = [camHUD];
+					pendulum.x = FlxG.width / 4;
+					pendulum.y = 0;
+					pendulum.antialiasing = true; // fuck you again
+					add(pendulumShadow);
+					add(pendulum);
+
+					tranceActive = true;
+				}
+			case 'missingno':
+				iconP2.alpha = 0;
+				camFollow.x = 510;
+				camFollow.y = 358;
+		} 
+		
 	}
 
+	var jumpScare:FlxSprite;
+
 	public function addTextToDebug(text:String) {
+		#if LUA_ALLOWED
 		luaDebugGroup.forEachAlive(function(spr:DebugLuaText) {
 			spr.y += 20;
 		});
 		luaDebugGroup.add(new DebugLuaText(text, luaDebugGroup));
+		#end
 	}
 
 	public function reloadHealthBarColors() {
@@ -1215,18 +1351,6 @@ class PlayState extends MusicBeatState
 				camHUD.visible = false;
 			}
 		}
-		
-		switch (SONG.song.toLowerCase()) {
-			case 'monochrome':
-				healthBar.alpha = 0;
-				healthBarBG.alpha = 0;
-				iconP1.alpha = 0;
-				iconP2.alpha = 0;
-				scoreTxt.alpha = 0;
-				timeBar.alpha = 0;
-				timeBarBG.alpha = 0;
-				timeTxt.alpha = 0;
-				dad.visible = false;
 
 		new FlxTimer().start(0.3, function(tmr:FlxTimer)
 		{
