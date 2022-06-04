@@ -187,16 +187,7 @@ class PlayState extends MusicBeatState
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
 
-	var halloweenBG:BGSprite;
-	var halloweenWhite:BGSprite;
-
-	var phillyCityLights:FlxTypedGroup<BGSprite>;
-	var phillyTrain:BGSprite;
-	var blammedLightsBlack:ModchartSprite;
-	var blammedLightsBlackTween:FlxTween;
-	var phillyCityLightsEvent:FlxTypedGroup<BGSprite>;
-	var phillyCityLightsEventTween:FlxTween;
-	var trainSound:FlxSound;
+	var foreground:BGSprite;
 
 	var limoKillingState:Int = 0;
 	var limo:BGSprite;
@@ -217,7 +208,7 @@ class PlayState extends MusicBeatState
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
 	var bgGhouls:BGSprite;
-
+	var psyshockParticle:Character;	
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
@@ -260,6 +251,24 @@ class PlayState extends MusicBeatState
 	// Lua shit
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	public var introSoundsSuffix:String = '';
+	
+	var pendulum:Pendulum;
+	var tranceThing:FlxSprite;
+	var tranceDeathScreen:FlxSprite;
+	var pendulumShadow:FlxTypedGroup<FlxSprite>;
+
+	var tranceActive:Bool = false;
+	var tranceDrain:Bool = false;
+	var tranceSound:FlxSound;
+	var tranceCanKill:Bool = true;
+	var pendulumDrain:Bool = true;
+	var psyshockCooldown:Int = 80;
+	var psyshocking:Bool = false;
+	var keyboardTimer:Int = 8;
+	var keyboard:FlxSprite;
+	var skippedFirstPendulum:Bool = false;
+
+	var unowning:Bool = false;
 
 	override public function create()
 	{
