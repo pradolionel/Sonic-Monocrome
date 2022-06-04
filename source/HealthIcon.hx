@@ -37,6 +37,14 @@ class HealthIcon extends FlxSprite
 	public function changeIcon(char:String) {
 		if(this.char != char) {
 			var name:String = 'icons/' + char;
+				case 'gold':
+					var file:FlxAtlasFrames = Paths.getSparrowAtlas('icons/Gold Health Icon');
+					frames = file;
+					
+					animation.addByPrefix(char, 'Gold Icon', 24, true);
+					animation.play(char);
+
+					offsetY = 12;
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
 			var file:Dynamic = Paths.image(name);

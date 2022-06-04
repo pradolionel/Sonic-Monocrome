@@ -1215,6 +1215,18 @@ class PlayState extends MusicBeatState
 				camHUD.visible = false;
 			}
 		}
+		
+		switch (SONG.song.toLowerCase()) {
+			case 'monochrome':
+				healthBar.alpha = 0;
+				healthBarBG.alpha = 0;
+				iconP1.alpha = 0;
+				iconP2.alpha = 0;
+				scoreTxt.alpha = 0;
+				timeBar.alpha = 0;
+				timeBarBG.alpha = 0;
+				timeTxt.alpha = 0;
+				dad.visible = false;
 
 		new FlxTimer().start(0.3, function(tmr:FlxTimer)
 		{
