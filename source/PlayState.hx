@@ -114,6 +114,8 @@ class PlayState extends MusicBeatState
 	
 	public static var songSpeed:Float = 0;
 	
+	public var canHitPendulum:Bool = false;
+	public var hitPendulum:Bool = false;
 	public var boyfriendGroup:FlxSpriteGroup;
 	public var dadGroup:FlxSpriteGroup;
 	public var gfGroup:FlxSpriteGroup;
@@ -129,13 +131,13 @@ class PlayState extends MusicBeatState
 	public var vocals:FlxSound;
 
 	public var dad:Character;
-	public var gf:Character;
 	public var boyfriend:Boyfriend;
 
 	public var notes:FlxTypedGroup<Note>;
 	public var unspawnNotes:Array<Note> = [];
 	public var eventNotes:Array<Dynamic> = [];
 
+	var isDownscroll:Bool = false;
 	private var strumLine:FlxSprite;
 
 	//Handles the new epic mega sexy cam code that i've done
@@ -153,9 +155,14 @@ class PlayState extends MusicBeatState
 	public var camZooming:Bool = false;
 	private var curSong:String = "";
 
+	var whiteHandDone:Bool = false;
+
 	public var gfSpeed:Int = 1;
 	public var health:Float = 1;
+	public var maxHealth:Float = 0;
 	public var combo:Int = 0;
+
+	public var celebiLayer:FlxTypedGroup<FlxSprite>;
 
 	private var healthBarBG:AttachedSprite;
 	public var healthBar:FlxBar;
@@ -172,7 +179,8 @@ class PlayState extends MusicBeatState
 	public static var usedPractice:Bool = false;
 	public static var changedDifficulty:Bool = false;
 	public static var cpuControlled:Bool = false;
-	var runCutscene:Bool = false;
+
+	var missingnoOcean:FlxSprite;
 
 	var botplaySine:Float = 0;
 	var botplayTxt:FlxText;
@@ -180,9 +188,13 @@ class PlayState extends MusicBeatState
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
+
+	var trance:Float = 0;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
+
+	var cameraCentered:Bool = false;
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
