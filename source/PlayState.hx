@@ -3826,10 +3826,100 @@ class PlayState extends MusicBeatState
 	var lightningOffset:Int = 8;
 
 	var lastBeatHit:Int = -1;
+	function resetPendulum() {
+		pendulum.daTween.cancel();
+		
+		if (SONG.player2 == 'hypno')
+			pendulum.angle = -9;
+		else
+			pendulum.angle = 0;
+		pendulumSwing();
+	}
 	override function beatHit()
 	{
 		super.beatHit();
-
+		if (ClientPrefs.fuckMode && curBeat % 16 == 0)
+			missingnoThing();
+		if (tranceActive) {
+			if (!pendulum.daTween.active) {
+				if (SONG.player2 == 'hypno')
+					pendulum.angle = -9;
+				else
+					pendulum.angle = 0;
+				pendulumSwing();
+			}
+		}
+		if (ClientPrefs.hellMode) {
+			if (curBeat % 2 == 0)
+				resetPendulum();
+		} else {
+			if (curBeat % 4 == 0)
+				resetPendulum();
+		} 
+		switch (SONG.song.toLowerCase()) {
+			case 'missingno':
+				switch (curBeat) {
+					case 59:
+						dad.debugMode = true;
+						dad.playAnim('intro', true);
+						dad.visible = true;
+						FlxG.sound.play(Paths.sound('missingnospawn', 'shared'));
+						dad.animation.finishCallback = function (name:String) {
+							dad.debugMode = false;
+							dad.animation.finishCallback = null;
+						};
+						FlxTween.tween(iconP2, {alpha: 1}, 1, {ease: FlxEase.linear});
+					case 267:
+						for (i in opponentStrums) {
+							FlxTween.tween(i, {alpha: 0}, 0.7, {ease: FlxEase.linear});
+						}
+					case 64:
+						defaultCamZoom = 0.8;
+					case 192 | 96 | 128 | 176 | 224 | 416 | 464 | 496:
+						if (ClientPrefs.hellMode)
+							startUnown(16);
+					case 264:
+						if (ClientPrefs.hellMode)
+							startUnown(8);
+					case 320:
+						if (ClientPrefs.hellMode)
+							startUnown(32, '?????????????????????????????????????????????????????????????????????????????????????????');
+					case 56:
+						if (ClientPrefs.hellMode)
+							startUnown(8, 'missingno');
+				}
+			case 'monochrome':
+				switch (curBeat) {
+					case 28:
+						FlxTween.tween(healthBar, {alpha: 0.4}, 3, {ease: FlxEase.linear});
+						FlxTween.tween(healthBarBG, {alpha: 0.4}, 3, {ease: FlxEase.linear});
+						FlxTween.tween(scoreTxt, {alpha: 0.4}, 3, {ease: FlxEase.linear});
+						FlxTween.tween(iconP1, {alpha: 1}, 3, {ease: FlxEase.linear});
+						FlxTween.tween(iconP2, {alpha: 1}, 3, {ease: FlxEase.linear});
+						for (i in playerStrums) {
+							FlxTween.tween(i, {alpha: 0.7}, 3, {ease: FlxEase.linear});
+						}
+					case 392:
+						dad.debugMode = true;
+						dad.playAnim('fadeOut', true);
+						FlxTween.tween(healthBar, {alpha: 0}, 1, {ease: FlxEase.linear});
+						FlxTween.tween(healthBarBG, {alpha: 0}, 1, {ease: FlxEase.linear});
+						FlxTween.tween(scoreTxt, {alpha: 0}, 1, {ease: FlxEase.linear});
+						FlxTween.tween(iconP1, {alpha: 0}, 1, {ease: FlxEase.linear});
+						FlxTween.tween(iconP2, {alpha: 0}, 1, {ease: FlxEase.linear});
+						for (i in playerStrums) {
+							FlxTween.tween(i, {alpha: 0}, 1, {ease: FlxEase.linear});
+						}
+					case 224:
+						/*if (ClientPrefs.hellMode)
+							startUnown(16, 'abcdefghijklmnopqrstuvwxyz');
+						else
+							startUnown(8);*/
+					case 232:
+						/*if (!ClientPrefs.hellMode)
+							startUnown(8);*/
+				}
+		}
 		if(lastBeatHit >= curBeat) {
 			trace('BEAT HIT: ' + curBeat + ', LAST HIT: ' + lastBeatHit);
 			return;
@@ -3837,7 +3927,7 @@ class PlayState extends MusicBeatState
 
 		if (generatedMusic)
 		{
-			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
+			notes.sort(FlxSort.byY, isDownscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
@@ -3872,21 +3962,16 @@ class PlayState extends MusicBeatState
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
 
-		if (curBeat % gfSpeed == 0 && !gf.stunned && gf.animation.curAnim.name != null && !gf.animation.curAnim.name.startsWith("sing"))
-		{
-			gf.dance();
-		}
-
 		if(curBeat % 2 == 0) {
 			if (boyfriend.animation.curAnim.name != null && !boyfriend.animation.curAnim.name.startsWith("sing"))
 			{
 				boyfriend.dance();
 			}
-			if (dad.animation.curAnim.name != null && !dad.animation.curAnim.name.startsWith("sing") && !dad.stunned)
+			if (dad.animation.curAnim.name != null && !dad.animation.curAnim.name.startsWith("sing") && !dad.stunned && !psyshocking)
 			{
 				dad.dance();
 			}
-		} else if(dad.danceIdle && dad.animation.curAnim.name != null && !dad.curCharacter.startsWith('gf') && !dad.animation.curAnim.name.startsWith("sing") && !dad.stunned) {
+		} else if(dad.danceIdle && dad.animation.curAnim.name != null && !dad.curCharacter.startsWith('gf') && !dad.animation.curAnim.name.startsWith("sing") && !dad.stunned && !psyshocking) {
 			dad.dance();
 		}
 
