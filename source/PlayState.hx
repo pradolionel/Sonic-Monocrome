@@ -273,8 +273,6 @@ class PlayState extends MusicBeatState
 	var pendulumDrain:Bool = true;
 	var psyshockCooldown:Int = 80;
 	var psyshocking:Bool = false;
-	var keyboardTimer:Int = 8;
-	var keyboard:FlxSprite;
 	var skippedFirstPendulum:Bool = false;
 
 	var unowning:Bool = false;
