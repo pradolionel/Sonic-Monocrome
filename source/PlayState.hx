@@ -199,16 +199,7 @@ class PlayState extends MusicBeatState
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
 
-	var halloweenBG:BGSprite;
-	var halloweenWhite:BGSprite;
-
-	var phillyCityLights:FlxTypedGroup<BGSprite>;
-	var phillyTrain:BGSprite;
-	var blammedLightsBlack:ModchartSprite;
-	var blammedLightsBlackTween:FlxTween;
-	var phillyCityLightsEvent:FlxTypedGroup<BGSprite>;
-	var phillyCityLightsEventTween:FlxTween;
-	var trainSound:FlxSound;
+	var foreground:BGSprite;
 
 	var limoKillingState:Int = 0;
 	var limo:BGSprite;
@@ -229,7 +220,7 @@ class PlayState extends MusicBeatState
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
 	var bgGhouls:BGSprite;
-
+	var psyshockParticle:Character;	
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
@@ -243,6 +234,8 @@ class PlayState extends MusicBeatState
 	public static var seenCutscene:Bool = false;
 	public static var deathCounter:Int = 0;
 
+	public var showCountdown:Bool = true;
+
 	public var defaultCamZoom:Float = 1.05;
 
 	// how big to stretch the pixel art assets
@@ -250,7 +243,7 @@ class PlayState extends MusicBeatState
 
 	public var inCutscene:Bool = false;
 	var songLength:Float = 0;
-
+	
 	#if desktop
 	// Discord RPC variables
 	var storyDifficultyText:String = "";
@@ -258,10 +251,7 @@ class PlayState extends MusicBeatState
 	var detailsPausedText:String = "";
 	#end
 
-	#if mobileC
-	var mcontrols:Mobilecontrols; 
-	#end	
-
+	var isMonoDead:Bool = false;
 	private var luaArray:Array<FunkinLua> = [];
 
 	//Achievement shit
@@ -273,13 +263,31 @@ class PlayState extends MusicBeatState
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	public var introSoundsSuffix:String = '';
 
+	var pendulum:Pendulum;
+	var tranceThing:FlxSprite;
+	var tranceDeathScreen:FlxSprite;
+	var pendulumShadow:FlxTypedGroup<FlxSprite>;
+
+	var tranceActive:Bool = false;
+	var tranceDrain:Bool = false;
+	var tranceSound:FlxSound;
+	var tranceCanKill:Bool = true;
+	var pendulumDrain:Bool = true;
+	var psyshockCooldown:Int = 80;
+	var psyshocking:Bool = false;
+	var keyboardTimer:Int = 8;
+	var keyboard:FlxSprite;
+	var skippedFirstPendulum:Bool = false;
+
+	var unowning:Bool = false;
+
 	override public function create()
 	{
-        #if MODS_ALLOWED
- 		Paths.destroyLoadedImages(resetSpriteCache);
-  		#end	
+		#if MODS_ALLOWED
+		Paths.destroyLoadedImages(resetSpriteCache);
+		#end
 		resetSpriteCache = false;
-
+		isDownscroll = ClientPrefs.downScroll;
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
@@ -294,6 +302,7 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
 		FlxG.cameras.add(camOther);
+
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
 
 		FlxCamera.defaultCameras = [camGame];
@@ -305,6 +314,8 @@ class PlayState extends MusicBeatState
 
 		if (SONG == null)
 			SONG = Song.loadFromJson('tutorial');
+		//set smallest rating I suppose
+		smallestRating = ratingIndexArray[0];
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
@@ -314,13 +325,9 @@ class PlayState extends MusicBeatState
 
 		// String that contains the mode defined here so it isn't necessary to call changePresence for each mode
 		if (isStoryMode)
-		{
-			detailsText = "Story Mode: " + WeekData.getCurrentWeek().weekName;
-		}
+			detailsText = "Story Mode: Hypno's Lullaby";
 		else
-		{
 			detailsText = "Freeplay";
-		}
 
 		// String for when the game is paused
 		detailsPausedText = "Paused - " + detailsText;
@@ -333,20 +340,10 @@ class PlayState extends MusicBeatState
 		if(PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1) {
 			switch (songName)
 			{
-				case 'spookeez' | 'south' | 'monster':
-					curStage = 'spooky';
-				case 'pico' | 'blammed' | 'philly' | 'philly-nice':
-					curStage = 'philly';
-				case 'milf' | 'satin-panties' | 'high':
-					curStage = 'limo';
-				case 'cocoa' | 'eggnog':
-					curStage = 'mall';
-				case 'winter-horrorland':
-					curStage = 'mallEvil';
-				case 'senpai' | 'roses':
-					curStage = 'school';
-				case 'thorns':
-					curStage = 'schoolEvil';
+				case 'left-unchecked' | 'safety-lullaby' | 'sporting':
+					curStage = 'alley';
+				case 'monochrome':
+					curStage = 'lost';
 				default:
 					curStage = 'stage';
 			}
