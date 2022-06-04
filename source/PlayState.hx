@@ -264,8 +264,6 @@ class PlayState extends MusicBeatState
 	var pendulumDrain:Bool = true;
 	var psyshockCooldown:Int = 80;
 	var psyshocking:Bool = false;
-	var keyboardTimer:Int = 8;
-	var keyboard:FlxSprite;
 	var skippedFirstPendulum:Bool = false;
 
 	var unowning:Bool = false;
@@ -1107,20 +1105,6 @@ class PlayState extends MusicBeatState
 				tranceActive = false;
 				remove(pendulum);
 			}
-		}
-		keyboard = new FlxSprite();
-		keyboard.frames = Paths.getSparrowAtlas('hypno/Extras', 'shared');
-		keyboard.animation.addByIndices('idle', 'Spacebar', [11, 12, 13, 14 ,15 ,16 ,17, 18], '', 24, false);
-		keyboard.animation.addByIndices('press', 'Spacebar', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], '', 24, false);
-		keyboard.animation.play('idle');
-		keyboard.cameras = [camHUD];
-		keyboard.screenCenter(X);
-		keyboard.y = 400;
-		keyboard.alpha = 0;
-		add(keyboard);
-
-		if (ClientPrefs.hellMode || ClientPrefs.pussyMode) {
-			remove(keyboard);
 		}
 		tranceThing = new FlxSprite();
 		tranceThing.frames = Paths.getSparrowAtlas('hypno/StaticHypno', 'shared');
