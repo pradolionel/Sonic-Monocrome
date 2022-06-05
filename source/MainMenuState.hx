@@ -31,7 +31,7 @@ class MainMenuState extends MusicBeatState
 	private var camGame:FlxCamera;
 	private var camAchievement:FlxCamera;
 	
-	var optionShit:Array<String> = ['story_mode', 'freeplay', #if ACHIEVEMENTS_ALLOWED 'awards', #end 'credits', #if !switch 'donate', #end 'options'];
+	var optionShit:Array<String> = ['story', 'freeplay', 'options'];'
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
@@ -196,7 +196,6 @@ class MainMenuState extends MusicBeatState
 
 		super.create();
 	}
-
 	#if ACHIEVEMENTS_ALLOWED
 	// Unlocks "Freaky on a Friday Night" achievement
 	function giveAchievement() {
@@ -272,22 +271,37 @@ class MainMenuState extends MusicBeatState
 
 								switch (daChoice)
 								{
-									case 'story_mode':
-										MusicBeatState.switchState(new StoryMenuState());
-									case 'freeplay':
-										MusicBeatState.switchState(new FreeplayState());
-									case 'awards':
-										MusicBeatState.switchState(new AchievementsMenuState());
-									case 'credits':
-										MusicBeatState.switchState(new CreditsState());
-									case 'options':
-										MusicBeatState.switchState(new OptionsState());
-								}
-							});
+							case 'story':
+								// Nevermind that's stupid lmao
+								PlayState.storyPlaylist = ["Safety Lullaby", "Left Unchecked"];
+								PlayState.isStoryMode = true;
+								PlayState.seenCutscene = false;
+
+								var diffic = CoolUtil.difficultyStuff[curDifficulty][1];
+								if (diffic == null) 
+									diffic = '';
+
+								PlayState.storyDifficulty = curDifficulty;
+
+								PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
+								PlayState.storyWeek = 1;
+								PlayState.campaignScore = 0;
+								PlayState.campaignMisses = 0;
+								new FlxTimer().start(0.5, function(tmr:FlxTimer)
+								{
+									LoadingState.loadAndSwitchState(new PlayState());
+									FlxG.sound.music.volume = 0;
+									FreeplayState.destroyFreeplayVocals();
+								});
+							case 'freeplay':
+								MusicBeatState.switchState(new FreeplayState());
+							case 'options':
+								MusicBeatState.switchState(new OptionsState());
 						}
 					});
 				}
-			}
+			});
+		}
 			else if (FlxG.keys.justPressed.SEVEN #if mobileC || _virtualpad.buttonC.justPressed #end)
 			{
 				selectedSomethin = true;
