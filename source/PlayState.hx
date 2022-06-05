@@ -217,6 +217,18 @@ class PlayState extends MusicBeatState
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
 	var bgGhouls:BGSprite;
+	public var hell:Bool = false;
+	public var hudAlpha:Bool = false;
+
+	var bg2:BGSprite;
+	var hands:FlxSprite;
+
+	// Fade Variables
+	var blackBG:FlxSprite;
+	var blackFG:FlxSprite;
+
+	//Hurt Variable
+	var wantDeath:Bool = false;
 
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
