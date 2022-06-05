@@ -2785,256 +2785,79 @@ class PlayState extends MusicBeatState
 			
 			case 'BG Freaks Expression':
 				if(bgGirls != null) bgGirls.swapDanceType();
-			case 'Psyshock':
-				psyshock();
-			case 'Fakeshock':
-				fakeshock();
-			case 'Unown':
-				startUnown(Std.parseInt(value1), value2);
-			case 'Celebi':
-				doCelebi(Std.parseFloat(value1));
-			case 'Missingno':
-				missingnoThing();
-				
 		}
 		callOnLuas('onEvent', [eventName, value1, value2]);
 	}
 
-	var missingnoStarted:Bool = false;
-	var reverseXY:Bool = false;
-
-	// I fucking hate math
-	final bullshitArray:Array<Int> = [-2, -1, 1, 2];
-
-	function missingnoThing() {
-		for (i in opponentStrums)
-			i.alpha = 0;
-		if (!ClientPrefs.pussyMode) {
-			
-			if (ClientPrefs.hellMode) {
-				FlxG.fullscreen = false;
-				Lib.application.window.move(FlxG.random.int(0, Std.int(Capabilities.screenResolutionX - FlxG.width)), FlxG.random.int(0, Std.int(Capabilities.screenResolutionY - FlxG.height)));
-				// shubs algorithm lmfao
-				missingnoStarted = true;
-				//reverseXY = FlxG.random.bool(50);
-				var shove:Int;
-				if (!reverseXY)
-					shove = FlxG.random.int(100, Std.int(FlxG.width / 4));
-				else
-					shove = FlxG.random.int(100, Std.int(FlxG.height / 4));
-
-				var placementX:Float;
-				var placementY:Float;
-				for (i in 0...playerStrums.length) {
-					var displacement:Float = FlxG.random.int(50, 100) * FlxG.random.float(-1, 1);
-					placementY = displacement;
-					placementX = ((shove / 1.5) * bullshitArray[i]);
-					if (reverseXY)
-						playerStrums.members[i].setPosition(
-							((FlxG.width / 2) - (playerStrums.members[i].width / 2)) + placementY, 
-							((FlxG.height / 2) - (playerStrums.members[i].height / 2)) + placementX
-						);
-					else
-						playerStrums.members[i].setPosition(
-							((FlxG.width / 2) - (playerStrums.members[i].width / 2)) + placementX, 
-							((FlxG.height / 2) - (playerStrums.members[i].height / 2)) + placementY
-						);
-				}
-
-			} else 
-			{
-				// ash algorithm
-				isDownscroll = FlxG.random.bool(50);
-				notes.forEach(function(note:Note){note.downscrollNote = isDownscroll;});
-				for (i in 0...playerStrums.length) {
-					if (i == 0) {
-						playerStrums.members[i].x = FlxG.random.int(100, Std.int(FlxG.width / 3));
-						if (isDownscroll)
-							playerStrums.members[i].y = FlxG.random.int(Std.int(FlxG.height / 2), FlxG.height - 100);
-						else
-							playerStrums.members[i].y = FlxG.random.int(0, 300);
-							
-					} else {
-						var futurex = FlxG.random.int(Std.int(playerStrums.members[i - 1].x) + 80, Std.int(playerStrums.members[i - 1].x) + 400);
-						if (futurex > FlxG.width - 100)
-							futurex = FlxG.width - 100;
-						playerStrums.members[i].x = futurex;
-	
-						playerStrums.members[i].y = FlxG.random.int(Std.int(playerStrums.members[0].y - 50), Std.int(playerStrums.members[0].y + 50));
-					}
-				}
-			}
-
-		}
-	}
-
-	var jumpscareSizeInterval:Float = 1.625;
-
-	function jumpscare(chance:Float, duration:Float) {
-		// jumpscare
-		if (!ClientPrefs.photosensitive) {
-			var outOfTen:Float = Std.random(10);
-			if (outOfTen <= ((!Math.isNaN(chance)) ? chance : 4)) {
-				jumpScare.visible = true;
-				camHUD.shake(0.0125 * (jumpscareSizeInterval / 2), (((!Math.isNaN(duration)) ? duration : 1) * Conductor.stepCrochet) / 1000, 
-					function(){
-						jumpScare.visible = false;
-						jumpscareSizeInterval += 0.125;
-						jumpScare.setGraphicSize(Std.int(FlxG.width * jumpscareSizeInterval), Std.int(FlxG.height * jumpscareSizeInterval));
-						jumpScare.updateHitbox();
-						jumpScare.screenCenter();
-					}, true
-				);
-			}
-		}
-	}
-
-	function doCelebi(newMax:Float):Void {
-		if (!ClientPrefs.pussyMode) {
-			maxHealth = newMax;
-			remove(healthBar);
-			healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8) - Std.int(healthBar.width * (maxHealth / 2)) , Std.int(healthBarBG.height - 8), this,
-				'health', maxHealth, 2);
-			healthBar.scrollFactor.set();
-			healthBar.visible = !ClientPrefs.hideHud;
-			remove(iconP1);
-			remove(iconP2);
-			add(healthBar);
-			add(iconP1);
-			add(iconP2);
-			healthBar.cameras = [camHUD];
-			reloadHealthBarColors();
-	
-			var celebi:FlxSprite = new FlxSprite(0 + FlxG.random.int(-150, -300), 0 + FlxG.random.int(-200, 200));
-			celebi.frames = Paths.getSparrowAtlas('lostSilver/Celebi_Assets', 'shared');
-			celebi.animation.addByPrefix('spawn', 'Celebi Spawn Full', 24, false);
-			celebi.animation.addByIndices('reverseSpawn', 'Celebi Spawn Full', [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],'', 24, false);
-			celebi.animation.addByPrefix('idle', 'Celebi Idle', 24, false);
-			celebi.animation.play('spawn');
-			celebi.animation.finishCallback = function (name:String) {
-				celebi.animation.play('idle');
-				var note:FlxSprite = new FlxSprite(celebi.x + FlxG.random.int(70, 100), celebi.y + FlxG.random.int(-50, 50));
-				note.frames = Paths.getSparrowAtlas('lostSilver/Note_asset', 'shared');
-				note.animation.addByPrefix('spawn', 'Note Full', 24, false);
-				note.animation.play('spawn');
-				note.animation.finishCallback = function (name:String) {
-					remove(note);
-				};
-				add(note);
-				FlxTween.tween(note, {x: note.x + FlxG.random.int(100, 190), y:FlxG.random.int(-80, 140)}, (Conductor.stepCrochet * 8 / 1000), {ease: FlxEase.quadOut});
-				celebi.animation.finishCallback = null;
-
-				if (ClientPrefs.hellMode)	{
-					for (i in 0...3) {
-						var note:FlxSprite = new FlxSprite(celebi.x + FlxG.random.int(70, 100), celebi.y + FlxG.random.int(-50, 50));
-						note.frames = Paths.getSparrowAtlas('lostSilver/Note_asset', 'shared');
-						note.animation.addByPrefix('spawn', 'Note Full', 24, false);
-						note.animation.play('spawn');
-						note.animation.finishCallback = function (name:String) {
-							remove(note);
-						};
-						add(note);
-						FlxTween.tween(note, {x: note.x + FlxG.random.int(100, 190), y:FlxG.random.int(-80, 140)}, (Conductor.stepCrochet * 8 / 1000), {ease: FlxEase.quadOut});
-						celebi.animation.finishCallback = null;
-					}
-				}
-			};
-			celebiLayer.add(celebi);
-			
-	
-			
-			new FlxTimer().start(Conductor.stepCrochet * 8 / 1000, function(tmr:FlxTimer)
-			{
-				var note:FlxSprite = new FlxSprite(celebi.x + FlxG.random.int(70, 100), celebi.y + FlxG.random.int(-50, 50));
-				note.frames = Paths.getSparrowAtlas('lostSilver/Note_asset', 'shared');
-				note.animation.addByPrefix('spawn', 'Note Full', 24, false);
-				note.animation.play('spawn');
-				note.animation.finishCallback = function (name:String) {
-					remove(note);
-				};
-				add(note);
-				FlxTween.tween(note, {x: note.x + FlxG.random.int(100, 190), y:FlxG.random.int(-80, 140)}, (Conductor.stepCrochet * 8 / 1000), {ease: FlxEase.quadOut});
-
-				if (ClientPrefs.hellMode)	{
-					for (i in 0...3) {
-						var note:FlxSprite = new FlxSprite(celebi.x + FlxG.random.int(70, 100), celebi.y + FlxG.random.int(-50, 50));
-						note.frames = Paths.getSparrowAtlas('lostSilver/Note_asset', 'shared');
-						note.animation.addByPrefix('spawn', 'Note Full', 24, false);
-						note.animation.play('spawn');
-						note.animation.finishCallback = function (name:String) {
-							remove(note);
-						};
-						add(note);
-						FlxTween.tween(note, {x: note.x + FlxG.random.int(100, 190), y:FlxG.random.int(-80, 140)}, (Conductor.stepCrochet * 8 / 1000), {ease: FlxEase.quadOut});
-						celebi.animation.finishCallback = null;
-					}
-				}
-
-			});
-	
-			new FlxTimer().start(Conductor.stepCrochet * 16 / 1000, function(tmr:FlxTimer)
-			{
-				celebi.animation.play('reverseSpawn', true);
-				celebi.animation.finishCallback = function (name:String) {
-					celebiLayer.remove(celebi);
-				};
-			});
-		}
-	
-	}
 	function moveCameraSection(?id:Int = 0):Void {
 		if(SONG.notes[id] == null) return;
 
 		if (!SONG.notes[id].mustHitSection)
 		{
 			moveCamera(true);
-			callOnLuas('onMoveCamera', ['dad']);
+			
+			if (SONG.notes[id].gfSection){
+				callOnLuas('onMoveCamera', ['gf']);
+			}else{
+				callOnLuas('onMoveCamera', ['dad']);
+			}
 		}
 		else
 		{
 			moveCamera(false);
-			callOnLuas('onMoveCamera', ['boyfriend']);
+			if (SONG.notes[id].gfSection){
+				callOnLuas('onMoveCamera', ['gf']);
+			}else{
+				callOnLuas('onMoveCamera', ['boyfriend']);
+			}
 		}
 	}
 
 	var cameraTwn:FlxTween;
-	var resizeCamera:Float = 0;
 	public function moveCamera(isDad:Bool) {
-		if (cameraCentered) {
-			resizeCamera = -0.3;
-			camFollow.x = (((dad.getMidpoint().x + 150 + dad.cameraPosition[0]) + (boyfriend.getMidpoint().x - 100 + boyfriend.cameraPosition[0])) / 2);
+		
+		
+		
+		if(isDad) {
+			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
+			camFollow.x += dad.cameraPosition[0];
+			camFollow.y += dad.cameraPosition[1];
+			tweenCamIn();
 		} else {
-			resizeCamera = 0;
-			if(isDad) {
-				camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
-				camFollow.x += dad.cameraPosition[0];
-				camFollow.y += dad.cameraPosition[1];
-				tweenCamIn();
-			} else {
-				camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
-	
-				switch (curStage)
-				{
-					case 'limo':
-						camFollow.x = boyfriend.getMidpoint().x - 300;
-					case 'mall':
-						camFollow.y = boyfriend.getMidpoint().y - 200;
-					case 'school' | 'schoolEvil':
-						camFollow.x = boyfriend.getMidpoint().x - 200;
-						camFollow.y = boyfriend.getMidpoint().y - 200;
-				}
-				camFollow.x -= boyfriend.cameraPosition[0];
-				camFollow.y += boyfriend.cameraPosition[1];
-	
-				if (Paths.formatToSongPath(SONG.song) == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1) {
-					cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut, onComplete:
-						function (twn:FlxTween) {
-							cameraTwn = null;
-						}
-					});
-				}
+			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
+
+			switch (curStage)
+			{
+				case 'limo':
+					camFollow.x = boyfriend.getMidpoint().x - 300;
+				case 'mall':
+					camFollow.y = boyfriend.getMidpoint().y - 200;
+				case 'school' | 'schoolEvil':
+					camFollow.x = boyfriend.getMidpoint().x - 200;
+					camFollow.y = boyfriend.getMidpoint().y - 200;
+			}
+			camFollow.x -= boyfriend.cameraPosition[0];
+			camFollow.y += boyfriend.cameraPosition[1];
+
+			if (Paths.formatToSongPath(SONG.song) == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1) {
+				cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut, onComplete:
+					function (twn:FlxTween) {
+						cameraTwn = null;
+					}
+				});
 			}
 		}
+		
+		
+		
+		if (SONG.notes[Std.int(curStep / 16)].gfSection){
+			
+			camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
+			camFollow.x += gf.cameraPosition[0];
+			camFollow.y += gf.cameraPosition[1];
+			tweenCamIn();
+		}
+		
 	}
 
 	function tweenCamIn() {
