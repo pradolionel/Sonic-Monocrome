@@ -1054,7 +1054,7 @@ class PlayState extends MusicBeatState
 							}
 						});
 					});
-				/*case 'senpai' | 'roses' | 'thorns':
+				case 'senpai' | 'roses' | 'thorns':
 					if(daSong == 'roses') FlxG.sound.play(Paths.sound('ANGRY'));
 					schoolIntro(doof);
 				default:
@@ -1064,18 +1064,6 @@ class PlayState extends MusicBeatState
 		} else {
 			startCountdown();
 		}
-			// IM DEAD
-			*/showCountdown = false;
-			
-			FlxG.sound.play(Paths.sound('ImDead' + FlxG.random.int(1, 7), 'shared'), 1);
-			// okay now fade in
-			//dad.playAnim('fadeIn', true);
-			new FlxTimer().start(2, function(tmr:FlxTimer)
-			{
-				startCountdown();
-			});
-		}
-
 		RecalculateRating();
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
@@ -1095,14 +1083,14 @@ class PlayState extends MusicBeatState
 		super.create();
 	}
 
-	/*public function addTextToDebug(text:String) {
+	public function addTextToDebug(text:String) {
 		luaDebugGroup.forEachAlive(function(spr:DebugLuaText) {
 			spr.y += 20;
 		});
 		luaDebugGroup.add(new DebugLuaText(text, luaDebugGroup));
 	}
 
-	*/public function reloadHealthBarColors() {
+	public function reloadHealthBarColors() {
 		healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
 			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
 		healthBar.updateBar();
@@ -1341,7 +1329,7 @@ class PlayState extends MusicBeatState
 			Conductor.songPosition -= Conductor.crochet * 5;
 			setOnLuas('startedCountdown', true);
 
-			var swagCounter:Int = 0;
+			//var swagCounter:Int = 0;
 
 			startTimer = new FlxTimer().start(Conductor.crochet / 1000, function(tmr:FlxTimer)
 			{
@@ -1410,7 +1398,7 @@ class PlayState extends MusicBeatState
 							}
 						});
 						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
-					case 2:
+					case 3:
 						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 						set.scrollFactor.set();
 
@@ -1431,7 +1419,70 @@ class PlayState extends MusicBeatState
 							}
 						});
 						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
-					case 3:
+					case 4:
+						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+						set.scrollFactor.set();
+
+						if (PlayState.isPixelStage)
+							set.setGraphicSize(Std.int(set.width * daPixelZoom));
+
+						set.screenCenter();
+						set.antialiasing = antialias;
+						add(set);
+						countDownSprites.push(set);
+						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
+							ease: FlxEase.cubeInOut,
+							onComplete: function(twn:FlxTween)
+							{
+								countDownSprites.remove(set);
+								remove(set);
+								set.destroy();
+							}
+						});
+						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
+					case 5:
+						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+						set.scrollFactor.set();
+
+						if (PlayState.isPixelStage)
+							set.setGraphicSize(Std.int(set.width * daPixelZoom));
+
+						set.screenCenter();
+						set.antialiasing = antialias;
+						add(set);
+						countDownSprites.push(set);
+						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
+							ease: FlxEase.cubeInOut,
+							onComplete: function(twn:FlxTween)
+							{
+								countDownSprites.remove(set);
+								remove(set);
+								set.destroy();
+							}
+						});
+						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
+					case 6:
+						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+						set.scrollFactor.set();
+
+						if (PlayState.isPixelStage)
+							set.setGraphicSize(Std.int(set.width * daPixelZoom));
+
+						set.screenCenter();
+						set.antialiasing = antialias;
+						add(set);
+						countDownSprites.push(set);
+						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
+							ease: FlxEase.cubeInOut,
+							onComplete: function(twn:FlxTween)
+							{
+								countDownSprites.remove(set);
+								remove(set);
+								set.destroy();
+							}
+						});
+						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
+					case 7:
 						var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 						go.scrollFactor.set();
 
@@ -1457,7 +1508,7 @@ class PlayState extends MusicBeatState
 					case 4:
 				}
 
-				*/notes.forEachAlive(function(note:Note) {
+				notes.forEachAlive(function(note:Note) {
 					note.copyAlpha = false;
 					note.alpha = 1 * note.multAlpha;
 				});
@@ -1474,7 +1525,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function startNextDialogue() {
+	*/function startNextDialogue() {
 		dialogueCount++;
 		callOnLuas('onNextDialogue', [dialogueCount]);
 	}
