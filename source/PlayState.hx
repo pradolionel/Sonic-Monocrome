@@ -1064,6 +1064,18 @@ class PlayState extends MusicBeatState
 		} else {
 			startCountdown();
 		}
+			// IM DEAD
+			showCountdown = false;
+			
+			FlxG.sound.play(Paths.sound('ImDead' + FlxG.random.int(1, 7), 'shared'), 1);
+			// okay now fade in
+			//dad.playAnim('fadeIn', true);
+			new FlxTimer().start(2, function(tmr:FlxTimer)
+			{
+				startCountdown();
+			});
+		}
+
 		RecalculateRating();
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
