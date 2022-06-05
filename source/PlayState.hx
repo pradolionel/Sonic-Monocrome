@@ -1054,7 +1054,7 @@ class PlayState extends MusicBeatState
 							}
 						});
 					});
-				case 'senpai' | 'roses' | 'thorns':
+				/*case 'senpai' | 'roses' | 'thorns':
 					if(daSong == 'roses') FlxG.sound.play(Paths.sound('ANGRY'));
 					schoolIntro(doof);
 				default:
@@ -1065,7 +1065,7 @@ class PlayState extends MusicBeatState
 			startCountdown();
 		}
 			// IM DEAD
-			showCountdown = false;
+			*/showCountdown = false;
 			
 			FlxG.sound.play(Paths.sound('ImDead' + FlxG.random.int(1, 7), 'shared'), 1);
 			// okay now fade in
