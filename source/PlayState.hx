@@ -2785,6 +2785,54 @@ class PlayState extends MusicBeatState
 			
 			case 'BG Freaks Expression':
 				if(bgGirls != null) bgGirls.swapDanceType();
+				
+					case 'Toggle HUD alpha':
+
+						var time:Float = Std.parseFloat(value1);
+
+
+								hudAlpha = !hudAlpha;
+
+								
+								if (hudAlpha)
+									{
+										//bg2.alpha = 0;
+										FlxTween.tween(camHUD, {alpha: 0}, time, {ease: FlxEase.elasticInOut});
+									} else
+									{
+										FlxTween.tween(camHUD, {alpha: 3}, time, {ease: FlxEase.elasticInOut});
+									}
+			case 'Toggle Health Drain':
+
+			wantDeath = !wantDeath;
+
+			case 'spooky':
+				//doesn't do anything but make dad visible
+				dad.alpha = 1;
+				
+					case 'Black BG Toggle':
+						var toggle:String = value1;
+						var time:Float = Std.parseFloat(value2);
+						if (toggle == "on")
+							{
+								FlxTween.tween(blackBG, {alpha : 1}, time, {type: FlxTweenType.ONESHOT, ease: FlxEase.quadInOut});
+							} else
+						if (toggle == "off")
+							{
+								FlxTween.tween(blackBG, {alpha : 0}, time, {type: FlxTweenType.ONESHOT, ease: FlxEase.quadInOut});
+							}
+		
+					case 'Black FG Toggle':
+						var toggle:String = value1;
+						var time:Float = Std.parseFloat(value2);
+						if (toggle == "on")
+							{
+								FlxTween.tween(blackFG, {alpha : 1}, time, {type: FlxTweenType.ONESHOT, ease: FlxEase.quadInOut});
+							} else
+						if (toggle == "off")
+							{
+								FlxTween.tween(blackFG, {alpha : 0}, time, {type: FlxTweenType.ONESHOT, ease: FlxEase.quadInOut});
+							}		
 		}
 		callOnLuas('onEvent', [eventName, value1, value2]);
 	}
@@ -2795,29 +2843,17 @@ class PlayState extends MusicBeatState
 		if (!SONG.notes[id].mustHitSection)
 		{
 			moveCamera(true);
-			
-			if (SONG.notes[id].gfSection){
-				callOnLuas('onMoveCamera', ['gf']);
-			}else{
-				callOnLuas('onMoveCamera', ['dad']);
-			}
+			callOnLuas('onMoveCamera', ['dad']);
 		}
 		else
 		{
 			moveCamera(false);
-			if (SONG.notes[id].gfSection){
-				callOnLuas('onMoveCamera', ['gf']);
-			}else{
-				callOnLuas('onMoveCamera', ['boyfriend']);
-			}
+			callOnLuas('onMoveCamera', ['boyfriend']);
 		}
 	}
 
 	var cameraTwn:FlxTween;
 	public function moveCamera(isDad:Bool) {
-		
-		
-		
 		if(isDad) {
 			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
 			camFollow.x += dad.cameraPosition[0];
@@ -2847,17 +2883,6 @@ class PlayState extends MusicBeatState
 				});
 			}
 		}
-		
-		
-		
-		if (SONG.notes[Std.int(curStep / 16)].gfSection){
-			
-			camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
-			camFollow.x += gf.cameraPosition[0];
-			camFollow.y += gf.cameraPosition[1];
-			tweenCamIn();
-		}
-		
 	}
 
 	function tweenCamIn() {
