@@ -57,63 +57,121 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		var yScroll:Float = Math.max(0.25 - (0.05 * (optionShit.length - 4)), 0.1);
-		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
-		bg.scrollFactor.set(0, yScroll);
-		bg.setGraphicSize(Std.int(bg.width * 1.175));
-		bg.updateHitbox();
-		bg.screenCenter();
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
-		add(bg);
+		var menuHypno:FlxSprite = new FlxSprite();
+		menuHypno.frames = Paths.getSparrowAtlas('MainMenuHypno');
+		menuHypno.animation.addByPrefix('bop', 'HypnoMenu', 24, true);
+		menuHypno.animation.play('bop');
+		menuHypno.setGraphicSize(Std.int(menuHypno.width * 5/6));
+		menuHypno.updateHitbox();
+		menuHypno.setPosition(FlxG.width - menuHypno.width + 100, FlxG.height - menuHypno.height + 100);
+		add(menuHypno);
 
-		camFollow = new FlxObject(0, 0, 1, 1);
-		camFollowPos = new FlxObject(0, 0, 1, 1);
-		add(camFollow);
-		add(camFollowPos);
-
-		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
-		magenta.scrollFactor.set(0, yScroll);
-		magenta.setGraphicSize(Std.int(magenta.width * 1.175));
-		magenta.updateHitbox();
-		magenta.screenCenter();
-		magenta.visible = false;
-		magenta.antialiasing = ClientPrefs.globalAntialiasing;
-		magenta.color = 0xFFfd719b;
-		add(magenta);
-		// magenta.scrollFactor.set();
-
-		menuItems = new FlxTypedGroup<FlxSprite>();
-		add(menuItems);
-
-		for (i in 0...optionShit.length)
-		{
-			var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
-			var menuItem:FlxSprite = new FlxSprite(0, (i * 140)  + offset);
-			menuItem.frames = Paths.getSparrowAtlas('mainmenu/menu_' + optionShit[i]);
-			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
-			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
-			menuItem.animation.play('idle');
-			menuItem.ID = i;
-			menuItem.screenCenter(X);
-			menuItems.add(menuItem);
-			var scr:Float = (optionShit.length - 4) * 0.135;
-			if(optionShit.length < 6) scr = 0;
-			menuItem.scrollFactor.set(0, scr);
-			menuItem.antialiasing = ClientPrefs.globalAntialiasing;
-			//menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
-			menuItem.updateHitbox();
+		for (i in 0...optionShit.length) {
+			var newAlphabet:Alphabet = new Alphabet(0, 75 + ((i + 1) * 100), optionShit[i], true);
+			newAlphabet.x = 30;
+			newAlphabet.alpha = 0.6;
+			newAlphabet.ID = i;
+			menuItems.add(newAlphabet);
 		}
+
+		menuItems.members[curSelected].alpha = 1;
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
+		var hypnoShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Hypno's Lullaby v1.1.0", 12);
+		hypnoShit.scrollFactor.set();
+		hypnoShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(hypnoShit);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "FNF Psych Engine' v0.4.2", 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
-		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(versionShit);
+
+		hypnoShit.updateHitbox();
+		versionHitbox = new FlxObject(hypnoShit.x + hypnoShit.width - 24, hypnoShit.y - 12, 24, 24);
+		add(versionHitbox);
+
+		updateSelection();
+
+		difficultySelectors = new FlxGroup();
+		add(difficultySelectors);
+
+		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		leftArrow = new FlxSprite(FlxG.width - 650, 10);
+		leftArrow.frames = ui_tex;
+		leftArrow.animation.addByPrefix('idle', "arrow left");
+		leftArrow.animation.addByPrefix('press', "arrow push left");
+		leftArrow.animation.play('idle');
+		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		difficultySelectors.add(leftArrow);
+
+		sprDifficultyGroup = new FlxTypedGroup<FlxSprite>();
+		add(sprDifficultyGroup);
+
+		for (i in 0...CoolUtil.difficultyStuff.length) {
+			var sprDifficulty:FlxSprite = new FlxSprite(leftArrow.x + 60, leftArrow.y).loadGraphic(Paths.image('menudifficulties/' + CoolUtil.difficultyStuff[i][0].toLowerCase()));
+			sprDifficulty.x += (308 - sprDifficulty.width) / 2;
+			sprDifficulty.ID = i;
+			sprDifficulty.antialiasing = ClientPrefs.globalAntialiasing;
+			sprDifficultyGroup.add(sprDifficulty);
+		}
+		changeDifficulty();
+
+		difficultySelectors.add(sprDifficultyGroup);
+
+		rightArrow = new FlxSprite(leftArrow.x + 376, leftArrow.y);
+		rightArrow.frames = ui_tex;
+		rightArrow.animation.addByPrefix('idle', 'arrow right');
+		rightArrow.animation.addByPrefix('press', "arrow push right", 24, false);
+		rightArrow.animation.play('idle');
+		rightArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		difficultySelectors.add(rightArrow);
+
+		//30 75
+	
+		if (displayList[0]) {
+			var starSprite:FlxSprite = new FlxSprite(30, 33);
+			starSprite.frames = Paths.getSparrowAtlas('Stars');
+			starSprite.animation.addByPrefix('Star', 'Star', 24, true);
+			starSprite.animation.play('Star');
+			starSprite.updateHitbox();
+			//starSprite.screenCenter(X);
+			//starSprite.y = FlxG.height - starSprite.height;
+			//starSprite.x -= starSprite.width;
+			add(starSprite);
+		}
+		if (displayList[1]) {
+			var starSprite:FlxSprite = new FlxSprite(163, 33);
+			starSprite.frames = Paths.getSparrowAtlas('Stars');
+			starSprite.animation.addByPrefix('Star', 'Star', 24, true);
+			starSprite.animation.play('Star');
+			starSprite.updateHitbox();
+			starSprite.color = FlxColor.RED;
+			//starSprite.screenCenter(X);
+			//starSprite.y = FlxG.height - starSprite.height;
+			//starSprite.x -= starSprite.width;
+			add(starSprite);
+		}
+		if (displayList[2]) {
+			var starSprite:FlxSprite = new FlxSprite(30, 500);
+			starSprite.frames = Paths.getSparrowAtlas('Stars');
+			starSprite.animation.addByPrefix('Star', 'Star', 24, true);
+			starSprite.animation.play('Star');
+			starSprite.updateHitbox();
+			starSprite.color = FlxColor.fromString('0xFFDAA520');
+			//starSprite.screenCenter(X);
+			//starSprite.y = FlxG.height - starSprite.height;
+			//starSprite.x -= starSprite.width;
+			add(starSprite);
+		}
+		if (displayList[3]) {
+			myHugeNuts = new FlxSprite(163, 500);
+			myHugeNuts.frames = Paths.getSparrowAtlas('Stars');
+			myHugeNuts.animation.addByPrefix('Star', 'Star', 24, true);
+			myHugeNuts.animation.play('Star');
+			myHugeNuts.updateHitbox();
+			myHugeNuts.color = FlxColor.GREEN;
+			add(myHugeNuts);
 
 		// NG.core.calls.event.logEvent('swag').send();
 
