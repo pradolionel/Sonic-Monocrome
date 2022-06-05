@@ -756,14 +756,8 @@ class PlayState extends MusicBeatState
 				insert(members.indexOf(dadGroup) - 1, evilTrail);
 
 			case 'lost':
-				healthBar.alpha = 0;
-				healthBarBG.alpha = 0;
-				iconP1.alpha = 0;
-				iconP2.alpha = 0;
-				scoreTxt.alpha = 0;
-				timeBar.alpha = 0;
-				timeBarBG.alpha = 0;
-				timeTxt.alpha = 0;
+			    gf.alpha = 0;
+				boyfriend.alpha = 0;
 		}
 
 		
