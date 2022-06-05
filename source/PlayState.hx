@@ -1398,91 +1398,28 @@ class PlayState extends MusicBeatState
 							}
 						});
 						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
+					case 2:
+						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+						set.scrollFactor.set();
+
+						if (PlayState.isPixelStage)
+							set.setGraphicSize(Std.int(set.width * daPixelZoom));
+
+						set.screenCenter();
+						set.antialiasing = antialias;
+						add(set);
+						countDownSprites.push(set);
+						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
+							ease: FlxEase.cubeInOut,
+							onComplete: function(twn:FlxTween)
+							{
+								countDownSprites.remove(set);
+								remove(set);
+								set.destroy();
+							}
+						});
+						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 					case 3:
-						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-						set.scrollFactor.set();
-
-						if (PlayState.isPixelStage)
-							set.setGraphicSize(Std.int(set.width * daPixelZoom));
-
-						set.screenCenter();
-						set.antialiasing = antialias;
-						add(set);
-						countDownSprites.push(set);
-						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-							ease: FlxEase.cubeInOut,
-							onComplete: function(twn:FlxTween)
-							{
-								countDownSprites.remove(set);
-								remove(set);
-								set.destroy();
-							}
-						});
-						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
-					case 4:
-						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-						set.scrollFactor.set();
-
-						if (PlayState.isPixelStage)
-							set.setGraphicSize(Std.int(set.width * daPixelZoom));
-
-						set.screenCenter();
-						set.antialiasing = antialias;
-						add(set);
-						countDownSprites.push(set);
-						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-							ease: FlxEase.cubeInOut,
-							onComplete: function(twn:FlxTween)
-							{
-								countDownSprites.remove(set);
-								remove(set);
-								set.destroy();
-							}
-						});
-						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
-					case 5:
-						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-						set.scrollFactor.set();
-
-						if (PlayState.isPixelStage)
-							set.setGraphicSize(Std.int(set.width * daPixelZoom));
-
-						set.screenCenter();
-						set.antialiasing = antialias;
-						add(set);
-						countDownSprites.push(set);
-						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-							ease: FlxEase.cubeInOut,
-							onComplete: function(twn:FlxTween)
-							{
-								countDownSprites.remove(set);
-								remove(set);
-								set.destroy();
-							}
-						});
-						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
-					case 6:
-						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-						set.scrollFactor.set();
-
-						if (PlayState.isPixelStage)
-							set.setGraphicSize(Std.int(set.width * daPixelZoom));
-
-						set.screenCenter();
-						set.antialiasing = antialias;
-						add(set);
-						countDownSprites.push(set);
-						FlxTween.tween(set, {y: set.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-							ease: FlxEase.cubeInOut,
-							onComplete: function(twn:FlxTween)
-							{
-								countDownSprites.remove(set);
-								remove(set);
-								set.destroy();
-							}
-						});
-						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
-					case 7:
 						var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 						go.scrollFactor.set();
 
@@ -1508,7 +1445,7 @@ class PlayState extends MusicBeatState
 					case 4:
 				}
 
-				notes.forEachAlive(function(note:Note) {
+				*/notes.forEachAlive(function(note:Note) {
 					note.copyAlpha = false;
 					note.alpha = 1 * note.multAlpha;
 				});
@@ -1525,7 +1462,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	*/function startNextDialogue() {
+	function startNextDialogue() {
 		dialogueCount++;
 		callOnLuas('onNextDialogue', [dialogueCount]);
 	}
