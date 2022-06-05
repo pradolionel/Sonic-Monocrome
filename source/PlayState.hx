@@ -1372,7 +1372,7 @@ class PlayState extends MusicBeatState
 					santa.dance(true);
 				}
 
-				switch (swagCounter)
+				/*switch (swagCounter)
 				{
 					case 0:
 						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
@@ -1445,7 +1445,7 @@ class PlayState extends MusicBeatState
 					case 4:
 				}
 
-				notes.forEachAlive(function(note:Note) {
+				*/notes.forEachAlive(function(note:Note) {
 					note.copyAlpha = false;
 					note.alpha = 1 * note.multAlpha;
 				});
