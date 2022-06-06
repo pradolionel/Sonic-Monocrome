@@ -770,6 +770,8 @@ class PlayState extends MusicBeatState
 			case 'lost':
 			    gf.alpha = 0;
 				boyfriend.alpha = 0;
+				camHUD.alpha = 0;
+				hudAlpha = true;
 		}
 
 		
@@ -2418,40 +2420,9 @@ class PlayState extends MusicBeatState
 	}
 
 	var isDead:Bool = false;
-
-	public function die():Void {
-		if (SONG.song.toLowerCase() == 'monochrome') {
-			boyfriend.stunned = true;
-			deathCounter++;
-			paused = true;
-
-			vocals.stop();
-			FlxG.sound.music.stop();
-
-			isDead = true;
-			isMonoDead = true;
-			dad.debugMode = true;
-			dad.playAnim('fadeOut', true);
-			dad.animation.finishCallback = function (name:String) {
-				remove(dad);
-			}
-
-			FlxTween.tween(healthBar, {alpha: 0}, 1, {ease: FlxEase.linear, onComplete: function (twn:FlxTween) {
-				healthBar.visible = false;
-				healthBarBG.visible = false;
-				scoreTxt.visible = false;
-				iconP1.visible = false;
-				iconP2.visible = false;
-			}});
-			FlxTween.tween(healthBarBG, {alpha: 0}, 1, {ease: FlxEase.linear});
-			FlxTween.tween(scoreTxt, {alpha: 0}, 1, {ease: FlxEase.linear});
-			FlxTween.tween(iconP1, {alpha: 0}, 1, {ease: FlxEase.linear});
-			FlxTween.tween(iconP2, {alpha: 0}, 1, {ease: FlxEase.linear});
-			for (i in playerStrums) {
-				FlxTween.tween(i, {alpha: 0}, 1, {ease: FlxEase.linear});
-			}
-			
-		} else {
+	function doDeathCheck() {
+		if (health <= 0 && !practiceMode && !isDead)
+		{
 			var ret:Dynamic = callOnLuas('onGameOver', []);
 			if(ret != FunkinLua.Function_Stop) {
 				boyfriend.stunned = true;
