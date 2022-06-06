@@ -2814,7 +2814,7 @@ class PlayState extends MusicBeatState
 										FlxTween.tween(camHUD, {alpha: 0}, time, {ease: FlxEase.elasticInOut});
 									} else
 									{
-										FlxTween.tween(camHUD, {alpha: 3}, time, {ease: FlxEase.elasticInOut});
+										FlxTween.tween(camHUD, {alpha: 1}, time, {ease: FlxEase.elasticInOut});
 									}
 			case 'Toggle Health Drain':
 
