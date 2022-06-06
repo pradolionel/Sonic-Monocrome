@@ -770,8 +770,6 @@ class PlayState extends MusicBeatState
 			case 'lost':
 			    gf.alpha = 0;
 				boyfriend.alpha = 0;
-				camHUD.alpha = 0;
-				hudAlpha = true;
 		}
 
 		
@@ -2420,9 +2418,40 @@ class PlayState extends MusicBeatState
 	}
 
 	var isDead:Bool = false;
-	function doDeathCheck() {
-		if (health <= 0 && !practiceMode && !isDead)
-		{
+
+	public function die():Void {
+		if (SONG.song.toLowerCase() == 'monochrome') {
+			boyfriend.stunned = true;
+			deathCounter++;
+			paused = true;
+
+			vocals.stop();
+			FlxG.sound.music.stop();
+
+			isDead = true;
+			isMonoDead = true;
+			dad.debugMode = true;
+			dad.playAnim('fadeOut', true);
+			dad.animation.finishCallback = function (name:String) {
+				remove(dad);
+			}
+
+			FlxTween.tween(healthBar, {alpha: 0}, 1, {ease: FlxEase.linear, onComplete: function (twn:FlxTween) {
+				healthBar.visible = false;
+				healthBarBG.visible = false;
+				scoreTxt.visible = false;
+				iconP1.visible = false;
+				iconP2.visible = false;
+			}});
+			FlxTween.tween(healthBarBG, {alpha: 0}, 1, {ease: FlxEase.linear});
+			FlxTween.tween(scoreTxt, {alpha: 0}, 1, {ease: FlxEase.linear});
+			FlxTween.tween(iconP1, {alpha: 0}, 1, {ease: FlxEase.linear});
+			FlxTween.tween(iconP2, {alpha: 0}, 1, {ease: FlxEase.linear});
+			for (i in playerStrums) {
+				FlxTween.tween(i, {alpha: 0}, 1, {ease: FlxEase.linear});
+			}
+			
+		} else {
 			var ret:Dynamic = callOnLuas('onGameOver', []);
 			if(ret != FunkinLua.Function_Stop) {
 				boyfriend.stunned = true;
@@ -3004,7 +3033,7 @@ class PlayState extends MusicBeatState
 
 				if (storyPlaylist.length <= 0)
 				{
-					FlxG.sound.playMusic(Paths.music('HYPNO_MENU'));
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
 					cancelFadeTween();
 					CustomFadeTransition.nextCamera = camOther;
@@ -3079,7 +3108,7 @@ class PlayState extends MusicBeatState
 					CustomFadeTransition.nextCamera = null;
 				}
 				MusicBeatState.switchState(new FreeplayState());
-				FlxG.sound.playMusic(Paths.music('HYPNO_MENU'));
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				usedPractice = false;
 				changedDifficulty = false;
 				cpuControlled = false;
@@ -3853,17 +3882,7 @@ class PlayState extends MusicBeatState
 		{
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
-			case 'monochrome':
-				switch (curBeat) {
-					case 28:
-						FlxTween.tween(healthBar, {alpha: 0.4}, 3, {ease: FlxEase.linear});
-						FlxTween.tween(healthBarBG, {alpha: 0.4}, 3, {ease: FlxEase.linear});
-						FlxTween.tween(scoreTxt, {alpha: 0.4}, 3, {ease: FlxEase.linear});
-						FlxTween.tween(iconP1, {alpha: 1}, 3, {ease: FlxEase.linear});
-						FlxTween.tween(iconP2, {alpha: 1}, 3, {ease: FlxEase.linear});
-						for (i in playerStrums) {
-							FlxTween.tween(i, {alpha: 0.7}, 3, {ease: FlxEase.linear});
-						}
+
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
 			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
