@@ -25,10 +25,6 @@ jobs:
           path: |
             %HAXELIB_ROOT%
           key: ${{ runner.os }}-android
-          
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2.0.2
-        
       - name: Setup Java JDK
         uses: actions/setup-java@v2.3.1
         with:
