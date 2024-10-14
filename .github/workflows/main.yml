@@ -14,33 +14,33 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@main
       - uses: krdlab/setup-haxe@v1.5.1
         with:
           haxe-version: 4.2.5
           
-      - name: Cache haxelib path
-        uses: actions/cache@v2
+      - name: cache haxe
+        uses: actions/cache@main
         with:
           path: |
             %HAXELIB_ROOT%
           key: ${{ runner.os }}-android
-      - name: Setup Java JDK
-        uses: actions/setup-java@v2.3.1
+      - name: jdk
+        uses: actions/setup-java@main
         with:
-          distribution: 'zulu'
-          java-version: '11'
+          distribution: temurin
+          java-version: 11
         
-      - uses: nttld/setup-ndk@v1
+      - uses: nttld/setup-ndk@main
         with:
-          ndk-version: r15c
+          ndk-version: r21e
 
       # Runs a set of commands using the runners shell
       - name: script run line haha
         run: |
           mkdir -p "%HAXELIB_ROOT%"
           haxelib setup "%HAXELIB_ROOT%"
-          haxelib install lime 7.9.0 --quiet
+          haxelib install lime --quiet
           haxelib install openfl --quiet
           haxelib install flixel 4.9.0 --quiet
           haxelib run lime setup
@@ -61,7 +61,7 @@ jobs:
           haxelib install actuate 
           haxelib list
           
-      - name: Build Log
+      - name: build
         run: |
           haxelib run lime rebuild hxcpp
           haxelib run lime setup android
@@ -69,5 +69,5 @@ jobs:
           
       - uses: actions/upload-artifact@main
         with:
-          name: Android Build
+          name: android
           path: export/release/android/bin/app/build/outputs/apk/debug
